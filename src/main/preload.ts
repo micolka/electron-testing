@@ -1,15 +1,20 @@
-// const { ipcRenderer, contextBridge } = require('electron');
 import { ipcRenderer, contextBridge } from 'electron';
+import { channels } from '../types';
+
+const ipcRendererSend = <T>(chanell: channels, data?: T) => {
+    ipcRenderer.send(chanell, data);
+}
 
 contextBridge.exposeInMainWorld(
-    'mainWinContext', {
-        sendInputData: (arg: string) => ipcRenderer.send('transfer-input-data', arg),
-        openAddWin: () => ipcRenderer.send('open-additioonal-window'),
-    }
+  'mainWinContext', {
+    ipcRendererSend,
+  }
 )
 
 declare global {
-    interface Window {
-        mainWinContext: any
+  interface Window {
+    mainWinContext: {
+        ipcRendererSend: typeof ipcRendererSend
     }
+  }
 }

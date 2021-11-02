@@ -1,4 +1,9 @@
-const { getData } = window.secondWinContext
+import { channels } from "../types"
+
+const { ipcRendererOn } = window.secondWinContext
 
 const caption = document.getElementById('caption')
-getData(caption)
+
+ipcRendererOn(channels.TRANSFER_DATA_FROM_MAIN, (arg: string) => {
+  caption.innerText = arg
+})

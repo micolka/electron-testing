@@ -1,12 +1,14 @@
+import { channels } from '../types';
+import './index.css';
 
-const { openAddWin, sendInputData } = window.mainWinContext
+const { ipcRendererSend } = window.mainWinContext
 
 document.getElementById('btn-send').addEventListener('click', () => {
-    openAddWin()
+  ipcRendererSend(channels.OPEN_ADDITIONAL_WINDOW)
 })
 
 document.getElementById('input').addEventListener('input', (e) => {
-    sendInputData((<HTMLInputElement>e.target).value)
+  ipcRendererSend(channels.TRANSFER_INPUT_DATA, (<HTMLInputElement>e.target).value)
 })
 
 const navSection = document.getElementById('nav-section')

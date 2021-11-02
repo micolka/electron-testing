@@ -1,15 +1,21 @@
 import { ipcRenderer, contextBridge } from 'electron';
+import { channels } from '../types';
+
+const ipcRendererOn = <T>(chanell: channels, callback: (data: T) => void) => {
+    const newCallBack = (_: Electron.IpcRendererEvent, data: T) => callback(data);
+    ipcRenderer.on(chanell, newCallBack)
+}
 
 contextBridge.exposeInMainWorld(
-    'secondWinContext', {
-        getData: (caption: HTMLElement) => ipcRenderer.on('transfer-data-from-main', (_, arg: string) => {
-            caption.innerText = arg
-        })
-    }
+  'secondWinContext', {
+    ipcRendererOn,
+  }
 )
 
 declare global {
-    interface Window {
-        secondWinContext: any
+  interface Window {
+    secondWinContext: {
+      ipcRendererOn: typeof ipcRendererOn,
     }
+  }
 }
