@@ -51,19 +51,19 @@
               "config": "./webpack.renderer.config.js",
               "entryPoints": [
                 {
-                  "html": "./src/main/index.html",
-                  "js": "./src/main/renderer.ts",
+                  "html": "./src/windows/main/index.html",
+                  "js": "./src/windows/main/renderer.ts",
                   "name": "main_window",
                   "preload": {
-                    "js": "./src/main/preload.ts"
+                    "js": "./src/windows/main/preload.ts"
                   }
                 },
                 {
-                  "html": "./src/second/index.html",
-                  "js": "./src/second/renderer.ts",
+                  "html": "./src/windows/second/index.html",
+                  "js": "./src/windows/second/renderer.ts",
                   "name": "second_window",
                   "preload": {
-                    "js": "./src/second/preload.ts"
+                    "js": "./src/windows/second/preload.ts"
                   }
                 }
               ]

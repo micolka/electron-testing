@@ -1,5 +1,5 @@
 import { ipcRenderer, contextBridge } from 'electron';
-import { channels } from '../types';
+import { channels } from '../../types';
 
 const ipcRendererOn = <T>(chanell: channels, callback: (data: T) => void) => {
     const newCallBack = (_: Electron.IpcRendererEvent, data: T) => callback(data);
