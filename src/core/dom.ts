@@ -26,6 +26,10 @@ export class CustomElement {
   handleInput(callback: (e?:Event) => void) {
     if (this.element instanceof HTMLInputElement) this.addListener('input', callback)    
   }
+
+  getValue() {
+    if (this.element instanceof HTMLInputElement) return this.element.value
+  }
 }
 
 export class TriggerCSSClassWithMouse extends CustomElement {
