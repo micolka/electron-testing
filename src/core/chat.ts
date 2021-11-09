@@ -29,6 +29,7 @@ export class ElectronChat extends CustomElement {
     }, '')
 
     this.element.innerHTML = inner
+    this.element.scrollTop = this.element.scrollHeight
   }
 }
 
