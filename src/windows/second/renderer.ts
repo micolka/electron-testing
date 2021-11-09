@@ -1,8 +1,9 @@
-import { CustomElement } from "../../dom/html"
+import { CustomElement } from "../../core/dom"
 import { channels } from "../../types"
 
 const { ipcRendererOn } = window.secondWinContext
+const caption = new CustomElement('caption') 
 
 ipcRendererOn(channels.TRANSFER_DATA_FROM_MAIN, (arg: string) => {
-  new CustomElement('caption').setInnerText(arg)
+  caption.setInnerText(arg)
 })
