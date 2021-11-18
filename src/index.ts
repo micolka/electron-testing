@@ -6,8 +6,6 @@ import { channels } from './types';
 // whether you're running in development or production).
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
-declare const SECOND_WINDOW_WEBPACK_ENTRY: string;
-declare const SECOND_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -29,6 +27,17 @@ const createWindow = (): void => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // mainWindow.webContents.openDevTools();
+
+  const chatListener = (event: Electron.IpcMainEvent, data: string) => {    
+    if (event.sender.id !== mainWindow.webContents.id) {
+      mainWindow.webContents.send(channels.TRANSFER_CHAT_MESSAGE_TO_WINDOWS, data)
+    }   
+  }
+  ipcMain.on(channels.SEND_CHAT_MESSAGE_TO_MAIN_PROCESS, chatListener);
+
+  mainWindow.on('close', () => {
+    ipcMain.removeListener(channels.SEND_CHAT_MESSAGE_TO_MAIN_PROCESS, chatListener);
+  })
 };
 
 app.on('ready', createWindow);
@@ -45,34 +54,4 @@ app.on('activate', () => {
   }
 });
 
-ipcMain.on(channels.OPEN_ADDITIONAL_WINDOW, () => {
-
-  const secondWindow = new BrowserWindow({
-    width: 400,
-    height: 400,
-    webPreferences: {
-      preload: SECOND_WINDOW_PRELOAD_WEBPACK_ENTRY,
-    }
-  })
-  
-  secondWindow.loadURL(SECOND_WINDOW_WEBPACK_ENTRY);
-  
-  // secondWindow.webContents.openDevTools()
-
-  const dataListener = (_: Electron.IpcMainEvent, data: string) => {    
-    secondWindow.webContents.send(channels.TRANSFER_DATA_FROM_MAIN, data)
-  }
-  ipcMain.on(channels.TRANSFER_INPUT_DATA, dataListener);
-
-  const chatListener = (event: Electron.IpcMainEvent, data: string) => {    
-    if (event.sender.id !== secondWindow.webContents.id) {
-      secondWindow.webContents.send(channels.TRANSFER_CHAT_MESSAGE_TO_WINDOWS, data)
-    }   
-  }
-  ipcMain.on(channels.SEND_CHAT_MESSAGE_TO_MAIN_PROCESS, chatListener);
-
-  secondWindow.on('close', () => {
-    ipcMain.removeListener(channels.TRANSFER_INPUT_DATA, dataListener);
-    ipcMain.removeListener(channels.SEND_CHAT_MESSAGE_TO_MAIN_PROCESS, chatListener);
-  })
-});
+ipcMain.on(channels.OPEN_ADDITIONAL_WINDOW, createWindow);
