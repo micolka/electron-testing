@@ -28,7 +28,7 @@ const createWindow = (): void => {
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 };
 
 app.on('ready', createWindow);
@@ -49,7 +49,7 @@ ipcMain.on(channels.OPEN_ADDITIONAL_WINDOW, () => {
 
   const secondWindow = new BrowserWindow({
     width: 400,
-    height: 300,
+    height: 400,
     webPreferences: {
       preload: SECOND_WINDOW_PRELOAD_WEBPACK_ENTRY,
     }
@@ -57,15 +57,22 @@ ipcMain.on(channels.OPEN_ADDITIONAL_WINDOW, () => {
   
   secondWindow.loadURL(SECOND_WINDOW_WEBPACK_ENTRY);
   
-  secondWindow.webContents.openDevTools()
+  // secondWindow.webContents.openDevTools()
 
   const dataListener = (_: Electron.IpcMainEvent, data: string) => {    
     secondWindow.webContents.send(channels.TRANSFER_DATA_FROM_MAIN, data)
   }
-
   ipcMain.on(channels.TRANSFER_INPUT_DATA, dataListener);
+
+  const chatListener = (event: Electron.IpcMainEvent, data: string) => {    
+    if (event.sender.id !== secondWindow.webContents.id) {
+      secondWindow.webContents.send(channels.TRANSFER_CHAT_MESSAGE_TO_WINDOWS, data)
+    }   
+  }
+  ipcMain.on(channels.SEND_CHAT_MESSAGE_TO_MAIN_PROCESS, chatListener);
 
   secondWindow.on('close', () => {
     ipcMain.removeListener(channels.TRANSFER_INPUT_DATA, dataListener);
+    ipcMain.removeListener(channels.SEND_CHAT_MESSAGE_TO_MAIN_PROCESS, chatListener);
   })
 });
