@@ -1,13 +1,13 @@
 export class CustomElement {
-  static elementsContainder: Map<string, HTMLElement | HTMLInputElement> = new Map()
+  static elementsContainer: Map<string, HTMLElement | HTMLInputElement> = new Map()
   element: HTMLElement | HTMLInputElement = null
 
   constructor(selector: string) {
-    if (CustomElement.elementsContainder.has(selector)) {      
-      this.element = CustomElement.elementsContainder.get(selector)
+    if (CustomElement.elementsContainer.has(selector)) {      
+      this.element = CustomElement.elementsContainer.get(selector)
     } else {
       this.element = document.getElementById(selector)
-      CustomElement.elementsContainder.set(selector, this.element)
+      CustomElement.elementsContainer.set(selector, this.element)
     }
   }
 
